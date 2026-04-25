@@ -3,31 +3,7 @@
 #include <string.h>
 #include "include/server.h"
 
-// initialization
-int network_init(void) {
-#ifdef _WIN32
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        fprintf(stderr, "WSAStartup failed\n");
-        return -1;
-    }
-#endif
-    return 0;
-}
 
-void network_cleanup(void) {
-#ifdef _WIN32
-    WSACleanup();
-#endif
-}
-
-socket_t create_socket(void) {
-    socket_t sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0) {
-        perror("Socket creation failed");
-    }
-    return sock;
-}
 
 //for faster restart after crash
 int set_reuseaddr(socket_t sock) {
@@ -101,12 +77,6 @@ socket_t accept_client(socket_t server_sock, struct sockaddr_in *client_addr) {
             printf("Failed to send response, closing connection\n");
             break;
         }
-    }
-}
-
-void close_socket(socket_t sock) {
-    if (sock >= 0) {
-        CLOSE_SOCKET(sock);
     }
 }
 

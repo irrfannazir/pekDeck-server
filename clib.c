@@ -3,32 +3,6 @@
 #include <string.h>
 #include "include/client.h"
 
-//initialization
-int network_init(void) {
-#ifdef _WIN32
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        fprintf(stderr, "WSAStartup failed\n");
-        return -1;
-    }
-#endif
-    return 0;
-}
-
-void network_cleanup(void) {
-#ifdef _WIN32
-    WSACleanup();
-#endif
-}
-
-socket_t create_socket(void) {
-    socket_t sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0) {
-        perror("Socket creation failed");
-    }
-    return sock;
-}
-
 int connect_to_server(socket_t sock, const char *ip, int port) {
     struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(server_addr));
@@ -56,11 +30,6 @@ int connect_to_server(socket_t sock, const char *ip, int port) {
     return 0;
 }
 
-void close_socket(socket_t sock) {
-    if (sock >= 0) {
-        CLOSE_SOCKET(sock);
-    }
-}
 
 int send_message(socket_t sock, const char *msg) {
     if (send(sock, msg, (int)strlen(msg), 0) < 0) {
